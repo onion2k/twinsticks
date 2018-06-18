@@ -64,12 +64,40 @@ export default class Sticks {
 
         this.controllerEl.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            this.state.touches.push({
-                x: e.targetTouches[0].pageX,
-                y: e.targetTouches[0].pageY
-            })
+            for (let i = 0; i < e.changedTouches.length; i++) {
+                console.log(e.changedTouches[i]);
+                this.state.touches.push({
+                    identifier: e.changedTouches[i].identifier,
+                    x: e.changedTouches[i].pageX,
+                    y: e.changedTouches[i].pageY
+                });
+            }
         });
 
+        this.controllerEl.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+
+            console.log(e.changedTouches, this.state.touches)
+
+            for (let i = 0; i < e.changedTouches.length; i++) {
+
+                let index;
+
+                for (var j = 0; j < this.state.touches.length; j++) {
+                    if (this.state.touches[j].identifier == e.changedTouches[i].identifier) {
+                        index = j;
+                    }
+                }
+
+                console.log("touch", index, e.changedTouches[i].pageX, e.changedTouches[i].pageY);
+                this.state.touches[index].x = e.changedTouches[i].pageX;
+                this.state.touches[index].y = e.changedTouches[i].pageY;
+            }
+        });
+        this.controllerEl.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            console.log(e);
+        });
     }
 
 }
