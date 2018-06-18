@@ -4,9 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "parcel watch src/index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "sticks": "^0.1.1"
+  }
 }
