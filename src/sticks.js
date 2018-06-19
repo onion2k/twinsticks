@@ -39,10 +39,10 @@ export default class Sticks {
     }
 
     field() {
-        this.controllerCtx.fillStyle = '#e0e0e0';
+        this.controllerCtx.fillStyle = '#f0f0f0';
         this.controllerCtx.fillRect(0,0,this.dimensions.width,this.dimensions.height);
 
-        this.controllerCtx.strokeStyle = '#f00';
+        this.controllerCtx.strokeStyle = '#ddd';
         this.controllerCtx.lineWidth = 1;
         
         this.controllerCtx.beginPath();
@@ -54,26 +54,38 @@ export default class Sticks {
     sticks() {
         this.state.touches.forEach((t)=>{
 
-            this.controllerCtx.strokeStyle = '#00f';
             this.controllerCtx.lineWidth = 2;
-            this.controllerCtx.fillStyle = '#00f';
+            this.controllerCtx.strokeStyle = '#ccc';
+            this.controllerCtx.fillStyle = '#eee';
   
-            if (t.x > this.dimensions.width * 0.5) {
-                  this.controllerCtx.strokeStyle = '#0f0';
-                  this.controllerCtx.fillStyle = '#0f0';
-              }
-            
-              this.controllerCtx.beginPath();
-              this.controllerCtx.arc(t.ix, t.iy, 150, 0, 2*Math.PI);
-              this.controllerCtx.stroke();
-  
-              this.controllerCtx.beginPath();
-              this.controllerCtx.arc(t.x, t.y, 25, 0, 2*Math.PI);
-              this.controllerCtx.fill();
-              this.controllerCtx.strokeStyle = '#000';
-              this.controllerCtx.lineWidth = 5;
-  
-              this.controllerCtx.stroke();
+            this.controllerCtx.beginPath();
+            this.controllerCtx.arc(t.ix, t.iy, 120, 0, 2*Math.PI);
+            this.controllerCtx.fill();
+            this.controllerCtx.stroke();
+
+            if (Math.hypot(t.x - t.ix, t.y - t.iy) < 120) {
+
+                this.controllerCtx.strokeStyle = '#ddd';
+                this.controllerCtx.lineWidth = 3;
+                this.controllerCtx.beginPath();
+                this.controllerCtx.moveTo(t.ix, t.iy);
+                this.controllerCtx.lineTo(t.x, t.y);
+                this.controllerCtx.stroke();
+
+                this.controllerCtx.fillStyle = '#8f8';
+                if (t.x > this.dimensions.width * 0.5) {
+                    this.controllerCtx.fillStyle = '#f88';
+                }
+    
+                this.controllerCtx.beginPath();
+                this.controllerCtx.arc(t.x, t.y, 25, 0, 2*Math.PI);
+                this.controllerCtx.fill();
+    
+                this.controllerCtx.strokeStyle = '#444';
+                this.controllerCtx.lineWidth = 2;
+                this.controllerCtx.stroke();
+
+            }
   
           });
     }
@@ -92,7 +104,6 @@ export default class Sticks {
                 });
             }
         });
-
         this.controllerEl.addEventListener('touchmove', (e) => {
             e.preventDefault();
             for (let i = 0; i < e.changedTouches.length; i++) {
