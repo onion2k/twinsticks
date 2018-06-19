@@ -7,7 +7,14 @@ export default class Sticks {
             touches: []
         };
 
-        this.controllerEl = document.querySelector(el);
+        this.controllerEl = document.getElementById(el);
+
+        // if (this.controllerEl.webkitRequestFullscreen) {
+        //     this.controllerEl.webkitRequestFullscreen();
+        // } else {
+        //     console.log("fs fail")
+        // }
+
         this.controllerCtx = this.controllerEl.getContext('2d');
         this.dimensions = this.controllerEl.getBoundingClientRect();
 
@@ -48,16 +55,27 @@ export default class Sticks {
         this.state.touches.forEach((t)=>{
 
             this.controllerCtx.strokeStyle = '#00f';
+            this.controllerCtx.lineWidth = 2;
+            this.controllerCtx.fillStyle = '#00f';
+  
             if (t.x > this.dimensions.width * 0.5) {
-                this.controllerCtx.strokeStyle = '#0f0';
-            }
-          
-            this.controllerCtx.beginPath();
-            this.controllerCtx.arc(t.x, t.y, 150, 0, 2*Math.PI);
-            this.controllerCtx.stroke();
-
-        });
-
+                  this.controllerCtx.strokeStyle = '#0f0';
+                  this.controllerCtx.fillStyle = '#0f0';
+              }
+            
+              this.controllerCtx.beginPath();
+              this.controllerCtx.arc(t.ix, t.iy, 150, 0, 2*Math.PI);
+              this.controllerCtx.stroke();
+  
+              this.controllerCtx.beginPath();
+              this.controllerCtx.arc(t.x, t.y, 25, 0, 2*Math.PI);
+              this.controllerCtx.fill();
+              this.controllerCtx.strokeStyle = '#000';
+              this.controllerCtx.lineWidth = 5;
+  
+              this.controllerCtx.stroke();
+  
+          });
     }
 
     attach(){
@@ -65,9 +83,10 @@ export default class Sticks {
         this.controllerEl.addEventListener('touchstart', (e) => {
             e.preventDefault();
             for (let i = 0; i < e.changedTouches.length; i++) {
-                console.log(e.changedTouches[i]);
                 this.state.touches.push({
                     identifier: e.changedTouches[i].identifier,
+                    ix: e.changedTouches[i].pageX,
+                    iy: e.changedTouches[i].pageY,
                     x: e.changedTouches[i].pageX,
                     y: e.changedTouches[i].pageY
                 });
@@ -76,27 +95,28 @@ export default class Sticks {
 
         this.controllerEl.addEventListener('touchmove', (e) => {
             e.preventDefault();
-
-            console.log(e.changedTouches, this.state.touches)
-
             for (let i = 0; i < e.changedTouches.length; i++) {
-
                 let index;
-
                 for (var j = 0; j < this.state.touches.length; j++) {
                     if (this.state.touches[j].identifier == e.changedTouches[i].identifier) {
                         index = j;
                     }
                 }
-
-                console.log("touch", index, e.changedTouches[i].pageX, e.changedTouches[i].pageY);
                 this.state.touches[index].x = e.changedTouches[i].pageX;
                 this.state.touches[index].y = e.changedTouches[i].pageY;
             }
         });
         this.controllerEl.addEventListener('touchend', (e) => {
             e.preventDefault();
-            console.log(e);
+            for (let i = 0; i < e.changedTouches.length; i++) {
+                let index;
+                for (var j = 0; j < this.state.touches.length; j++) {
+                    if (this.state.touches[j].identifier == e.changedTouches[i].identifier) {
+                        index = j;
+                    }
+                }
+                this.state.touches.splice(index, 1);
+            }
         });
     }
 
