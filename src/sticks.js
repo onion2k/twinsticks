@@ -1,19 +1,15 @@
 
 export default class Sticks {
 
-    constructor(el){
+    constructor(id){
+
+        console.log("Init");
 
         this.state = {
             touches: []
         };
 
-        this.controllerEl = document.getElementById(el);
-
-        // if (this.controllerEl.webkitRequestFullscreen) {
-        //     this.controllerEl.webkitRequestFullscreen();
-        // } else {
-        //     console.log("fs fail")
-        // }
+        this.controllerEl = document.getElementById(id);
 
         this.controllerCtx = this.controllerEl.getContext('2d');
         this.dimensions = this.controllerEl.getBoundingClientRect();
@@ -85,12 +81,58 @@ export default class Sticks {
                 this.controllerCtx.lineWidth = 2;
                 this.controllerCtx.stroke();
 
+            } else {
+
+                this.controllerCtx.strokeStyle = '#ddd';
+                this.controllerCtx.lineWidth = 3;
+                this.controllerCtx.beginPath();
+                this.controllerCtx.moveTo(t.ix, t.iy);
+                this.controllerCtx.lineTo(t.x, t.y);
+                this.controllerCtx.stroke();
+
+                this.controllerCtx.fillStyle = '#dfd';
+                if (t.x > this.dimensions.width * 0.5) {
+                    this.controllerCtx.fillStyle = '#fdd';
+                }
+    
+                this.controllerCtx.beginPath();
+                this.controllerCtx.arc(t.x, t.y, 25, 0, 2*Math.PI);
+                this.controllerCtx.fill();
+    
+                this.controllerCtx.strokeStyle = '#bbb';
+                this.controllerCtx.lineWidth = 2;
+                this.controllerCtx.stroke();
+
             }
   
           });
     }
 
     attach(){
+
+        this.controllerEl.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            this.state.touches.push({
+                identifier: 0,
+                ix: e.pageX,
+                iy: e.pageY,
+                x: e.pageX,
+                y: e.pageY
+            });
+        });
+
+        this.controllerEl.addEventListener('mousemove', (e) => {
+            e.preventDefault();
+            if (this.state.touches.length > 0) {
+                this.state.touches[0].x = e.pageX;
+                this.state.touches[0].y = e.pageY;
+            }
+        });
+
+        this.controllerEl.addEventListener('mouseup', (e) => {
+            e.preventDefault();
+            this.state.touches = [];
+        });
 
         this.controllerEl.addEventListener('touchstart', (e) => {
             e.preventDefault();
