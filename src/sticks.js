@@ -73,14 +73,19 @@ export default class Sticks {
             this.controllerCtx.fill();
             this.controllerCtx.stroke();
 
-            if (Math.hypot(t.x - t.ix, t.y - t.iy) < 120) {
+            if (t.active) {
 
                 this.controllerCtx.strokeStyle = '#ddd';
                 this.controllerCtx.lineWidth = 3;
                 this.controllerCtx.beginPath();
                 this.controllerCtx.moveTo(t.ix, t.iy);
-                this.controllerCtx.lineTo(t.x, t.y);
+                this.controllerCtx.lineTo(t.cx, t.cy);
                 this.controllerCtx.stroke();
+
+                this.controllerCtx.fillStyle = '#000';
+                this.controllerCtx.beginPath();
+                this.controllerCtx.arc(t.cx, t.cy, 5, 0, 2*Math.PI);
+                this.controllerCtx.fill();
 
                 this.controllerCtx.fillStyle = '#8f8';
                 if (t.ix > this.dimensions.width * 0.5) {
@@ -101,8 +106,13 @@ export default class Sticks {
                 this.controllerCtx.lineWidth = 3;
                 this.controllerCtx.beginPath();
                 this.controllerCtx.moveTo(t.ix, t.iy);
-                this.controllerCtx.lineTo(t.x, t.y);
+                this.controllerCtx.lineTo(t.cx, t.cy);
                 this.controllerCtx.stroke();
+
+                this.controllerCtx.fillStyle = '#000';
+                this.controllerCtx.beginPath();
+                this.controllerCtx.arc(t.cx, t.cy, 5, 0, 2*Math.PI);
+                this.controllerCtx.fill();
 
                 this.controllerCtx.fillStyle = '#dfd';
                 if (t.ix > this.dimensions.width * 0.5) {
@@ -125,8 +135,8 @@ export default class Sticks {
     updateMag(){
 
         this.state.touches.forEach((t)=>{
-            let magX = Math.round((t.x - t.ix) / 120 * 1000 ) / 1000;
-            let magY = Math.round((1 - (t.y - t.iy)) / 120 * 1000 ) / 1000;
+            let magX = Math.round((t.cx - t.ix) / 120 * 1000 ) / 1000;
+            let magY = Math.round((1 - (t.cy - t.iy)) / 120 * 1000 ) / 1000;
 
             if (magX < -1) { magX = -1; }
             if (magX > 1)  { magX = 1; }
@@ -151,6 +161,7 @@ export default class Sticks {
                 y: e.pageY,
                 magX: 0,
                 magY: 0,
+                active: true
             });
             this.updateMag();
         });
@@ -158,6 +169,13 @@ export default class Sticks {
         this.controllerEl.addEventListener('mousemove', (e) => {
             e.preventDefault();
             if (this.state.touches.length > 0) {
+                if (Math.hypot(e.pageX - this.state.touches[0].ix, e.pageY - this.state.touches[0].iy) < 120) {
+                    this.state.touches[0].active = true;
+                    this.state.touches[0].cx = e.pageX;
+                    this.state.touches[0].cy = e.pageY;
+                } else {
+                    this.state.touches[0].active = false;
+                }
                 this.state.touches[0].x = e.pageX;
                 this.state.touches[0].y = e.pageY;
             }
@@ -176,13 +194,17 @@ export default class Sticks {
                     identifier: e.changedTouches[i].identifier,
                     ix: e.changedTouches[i].pageX,
                     iy: e.changedTouches[i].pageY,
+                    cx: e.changedTouches[i].pageX,
+                    cy: e.changedTouches[i].pageY,
                     x: e.changedTouches[i].pageX,
                     y: e.changedTouches[i].pageY,
                     magX: 0,
                     magY: 0,
+                    active: true
                 });
             }
             this.updateMag();
+
         });
         this.controllerEl.addEventListener('touchmove', (e) => {
             e.preventDefault();
@@ -192,6 +214,13 @@ export default class Sticks {
                     if (this.state.touches[j].identifier == e.changedTouches[i].identifier) {
                         index = j;
                     }
+                }
+                if (Math.hypot(e.changedTouches[i].pageX - this.state.touches[index].ix, e.changedTouches[i].pageY - this.state.touches[index].iy) < 120) {
+                    this.state.touches[index].active = true;
+                    this.state.touches[index].cx = e.changedTouches[i].pageX;
+                    this.state.touches[index].cy = e.changedTouches[i].pageY;
+                } else {
+                    this.state.touches[index].active = false;
                 }
                 this.state.touches[index].x = e.changedTouches[i].pageX;
                 this.state.touches[index].y = e.changedTouches[i].pageY;
