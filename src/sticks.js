@@ -31,6 +31,7 @@ export default class Sticks {
     render(){
         this.field();
         this.sticks();
+        this.log();
         requestAnimationFrame(this.render);
     }
 
@@ -47,6 +48,16 @@ export default class Sticks {
         this.controllerCtx.stroke();
     }
 
+    log() {
+        this.controllerCtx.fillStyle = '#000';
+        this.controllerCtx.font = '12px san-serif';
+  
+        this.controllerCtx.fillText('Hello world', (this.dimensions.width * 0.25) - 50, this.dimensions.height - 50);
+  
+        this.controllerCtx.fillText('Hello world', (this.dimensions.width * 0.75) - 50, this.dimensions.height - 50);
+  
+      }
+  
     sticks() {
         this.state.touches.forEach((t)=>{
 
