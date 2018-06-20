@@ -21,7 +21,6 @@ export default class Sticks {
         this.controllerCtx.height = this.dimensions.height;
 
         this.render = this.render.bind(this);
-        // this.updateMag = this.updateMag.bind(this);
 
         this.attach();
 
@@ -37,8 +36,10 @@ export default class Sticks {
     }
 
     field() {
-        this.controllerCtx.fillStyle = '#f0f0f0';
-        this.controllerCtx.fillRect(0,0,this.dimensions.width,this.dimensions.height);
+        // this.controllerCtx.fillStyle = '#f0f0f0';
+        // this.controllerCtx.fillRect(0,0,this.dimensions.width,this.dimensions.height);
+
+        this.controllerCtx.clearRect(0,0,this.dimensions.width,this.dimensions.height);
 
         this.controllerCtx.strokeStyle = '#ddd';
         this.controllerCtx.lineWidth = 1;
@@ -66,7 +67,7 @@ export default class Sticks {
 
             this.controllerCtx.lineWidth = 2;
             this.controllerCtx.strokeStyle = '#ccc';
-            this.controllerCtx.fillStyle = '#eee';
+            this.controllerCtx.fillStyle = 'rgba(255,255,255,0.1)';
   
             this.controllerCtx.beginPath();
             this.controllerCtx.arc(t.ix, t.iy, 120, 0, 2*Math.PI);
@@ -82,7 +83,7 @@ export default class Sticks {
                 this.controllerCtx.lineTo(t.cx, t.cy);
                 this.controllerCtx.stroke();
 
-                this.controllerCtx.fillStyle = '#000';
+                this.controllerCtx.fillStyle = 'rgba(0,0,0,0.5)';
                 this.controllerCtx.beginPath();
                 this.controllerCtx.arc(t.cx, t.cy, 5, 0, 2*Math.PI);
                 this.controllerCtx.fill();
