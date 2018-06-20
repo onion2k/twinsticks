@@ -21,6 +21,7 @@ export default class Sticks {
         this.controllerCtx.height = this.dimensions.height;
 
         this.render = this.render.bind(this);
+        // this.updateMag = this.updateMag.bind(this);
 
         this.attach();
 
@@ -50,12 +51,14 @@ export default class Sticks {
 
     log() {
         this.controllerCtx.fillStyle = '#000';
-        this.controllerCtx.font = '12px san-serif';
-  
-        this.controllerCtx.fillText('Hello world', (this.dimensions.width * 0.25) - 50, this.dimensions.height - 50);
-  
-        this.controllerCtx.fillText('Hello world', (this.dimensions.width * 0.75) - 50, this.dimensions.height - 50);
-  
+        this.controllerCtx.font = '12px sans-serif';
+        this.state.touches.forEach((t)=>{
+            let l = `${ t.magX }, ${ t.magY }`;
+            let o = 0.25;
+            if (t.ix > this.dimensions.width * 0.5) { o = 0.75; }
+            this.controllerCtx.fillText(l, (this.dimensions.width * o) - 50, this.dimensions.height - 50);
+        });
+
       }
   
     sticks() {
@@ -80,7 +83,7 @@ export default class Sticks {
                 this.controllerCtx.stroke();
 
                 this.controllerCtx.fillStyle = '#8f8';
-                if (t.x > this.dimensions.width * 0.5) {
+                if (t.ix > this.dimensions.width * 0.5) {
                     this.controllerCtx.fillStyle = '#f88';
                 }
     
@@ -102,7 +105,7 @@ export default class Sticks {
                 this.controllerCtx.stroke();
 
                 this.controllerCtx.fillStyle = '#dfd';
-                if (t.x > this.dimensions.width * 0.5) {
+                if (t.ix > this.dimensions.width * 0.5) {
                     this.controllerCtx.fillStyle = '#fdd';
                 }
     
@@ -119,6 +122,23 @@ export default class Sticks {
           });
     }
 
+    updateMag(){
+
+        this.state.touches.forEach((t)=>{
+            let magX = Math.round((t.x - t.ix) / 120 * 1000 ) / 1000;
+            let magY = Math.round((1 - (t.y - t.iy)) / 120 * 1000 ) / 1000;
+
+            if (magX < -1) { magX = -1; }
+            if (magX > 1)  { magX = 1; }
+
+            if (magY < -1) { magY = -1; }
+            if (magY > 1)  { magY = 1; }
+
+            t.magX = magX;
+            t.magY = magY;
+        });
+    }
+
     attach(){
 
         this.controllerEl.addEventListener('mousedown', (e) => {
@@ -128,8 +148,11 @@ export default class Sticks {
                 ix: e.pageX,
                 iy: e.pageY,
                 x: e.pageX,
-                y: e.pageY
+                y: e.pageY,
+                magX: 0,
+                magY: 0,
             });
+            this.updateMag();
         });
 
         this.controllerEl.addEventListener('mousemove', (e) => {
@@ -138,6 +161,7 @@ export default class Sticks {
                 this.state.touches[0].x = e.pageX;
                 this.state.touches[0].y = e.pageY;
             }
+            this.updateMag();
         });
 
         this.controllerEl.addEventListener('mouseup', (e) => {
@@ -153,9 +177,12 @@ export default class Sticks {
                     ix: e.changedTouches[i].pageX,
                     iy: e.changedTouches[i].pageY,
                     x: e.changedTouches[i].pageX,
-                    y: e.changedTouches[i].pageY
+                    y: e.changedTouches[i].pageY,
+                    magX: 0,
+                    magY: 0,
                 });
             }
+            this.updateMag();
         });
         this.controllerEl.addEventListener('touchmove', (e) => {
             e.preventDefault();
@@ -169,6 +196,7 @@ export default class Sticks {
                 this.state.touches[index].x = e.changedTouches[i].pageX;
                 this.state.touches[index].y = e.changedTouches[i].pageY;
             }
+            this.updateMag();
         });
         this.controllerEl.addEventListener('touchend', (e) => {
             e.preventDefault();
